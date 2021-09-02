@@ -8,11 +8,11 @@ export namespace CondaStore {
             name: string,
         }
     }>> {
-        const result = await fetch('localhost:5000/api/v1/environment/')
+        const result = await fetch('http://localhost:5000/api/v1/environment/')
         if (result.ok) {
             return await result.json()
         } else {
-            return []
+            return null
         }
     }
 
@@ -24,12 +24,12 @@ export namespace CondaStore {
         sha256: string,
         version: string,
     }>> {
-        const result = await fetch(`localhost:5000/api/v1/environment/${envNamespace}/${envName}/`)
+        const result = await fetch(`http://localhost:5000/api/v1/environment/${envNamespace}/${envName}/`)
         if (result.ok) {
             const {packages} = await result.json()
             return packages
         } else {
-            return []
+            return null
         }
     }
 }

@@ -15,7 +15,8 @@ import {
   CondaEnvWidget,
   condaIcon,
   CONDA_WIDGET_CLASS,
-  IEnvironmentManager
+  IEnvironmentManager,
+  CondaStore
 } from '@mamba-org/gator-common';
 import { INotification } from 'jupyterlab_toastify';
 import { managerTour } from './tour';
@@ -26,8 +27,25 @@ import {
 } from './validator';
 
 const CONDAENVID = '@mamba-org/gator-lab:plugin';
+const CONDASTOREENVID = '@quansight/gator-lab:plugin';
 const TOUR_DELAY = 1000;
 const TOUR_TIMEOUT = 5 * TOUR_DELAY + 1;
+
+async function activateCondaStoreEnv(
+  app: JupyterFrontEnd,
+  settingsRegistry: ISettingRegistry | null,
+  palette: ICommandPalette | null,
+  menu: IMainMenu | null,
+  restorer: ILayoutRestorer | null
+): Promise<IEnvironmentManager> {
+  console.log("activated conda store env extension!!");
+  console.log(CondaStore.fetchEnvironments());
+
+  // console.log("envs: ", envs);
+
+  
+  return ;
+}
 
 async function activateCondaEnv(
   app: JupyterFrontEnd,
@@ -36,6 +54,7 @@ async function activateCondaEnv(
   menu: IMainMenu | null,
   restorer: ILayoutRestorer | null
 ): Promise<IEnvironmentManager> {
+  console.log("activated conda env extension!!");
   let tour: any;
   const { commands, shell } = app;
   const pluginNamespace = 'conda-env';
@@ -129,6 +148,7 @@ async function activateCondaEnv(
     menu.settingsMenu.addGroup([{ command: command }], 999);
   }
 
+  console.log("model looks like this: ", model);
   return model;
 }
 
@@ -175,6 +195,17 @@ const condaManager: JupyterFrontEndPlugin<IEnvironmentManager> = {
 };
 
 /**
+ * Initialization data for the @quansight/gator-lab extension.
+ */
+ const condaStoreManager: JupyterFrontEndPlugin<IEnvironmentManager> = {
+  id: CONDASTOREENVID,
+  autoStart: true,
+  activate: activateCondaStoreEnv,
+  optional: [ISettingRegistry, ICommandPalette, IMainMenu, ILayoutRestorer],
+  provides: IEnvironmentManager
+};
+
+/**
  * Initialization data for the jupyterlab_kernel_companions extension.
  */
 const companions: JupyterFrontEndPlugin<ICompanionValidator> = {
@@ -186,7 +217,7 @@ const companions: JupyterFrontEndPlugin<ICompanionValidator> = {
   provides: ICompanionValidator
 };
 
-const extensions = [condaManager, companions];
+const extensions = [condaManager, condaStoreManager, companions];
 
 export default extensions;
 
